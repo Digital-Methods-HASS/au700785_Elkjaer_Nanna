@@ -1,0 +1,66 @@
+---
+title: "Danish kings duration of reign through time"
+author: "Nanna Elkjær-Larsen"
+date: "2022-11-29"
+output: html_document
+---
+
+Dataframe on danish kings duration of reign through time
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(forcats)
+
+```
+
+## Load dataframe
+
+I firstly need to load the dataframe and define it as an object 
+
+```{r load dataframe}
+read_csv2("data/kings_3-kopi.csv")
+
+kings <- read_csv2("data/kings_3-kopi.csv")
+```
+
+Although duration and midyear is already included in my dataset, I  want to illustrate how it is calculated and added to my dataframe in R. I will call them duration_1 and midyear_1. 
+
+```{r }
+kings %>% 
+  mutate(duration_1=End_date-Start_date) %>% 
+  mutate(midyear_1=End_date-Duration/2)
+
+```
+This is my clean dataframe and I will save it as kings_clean
+
+```{r }
+kings_clean <- kings %>% 
+  mutate(duration_1=End_date-Start_date) %>% 
+  mutate(midyear_1=End_date-Duration/2)
+```
+
+## Visualization 
+
+I can then make a visualization of the duration of reign among Danish kings through time using ggplot. 
+
+```{r visualization,}
+
+kings_clean %>%
+  ggplot(aes(x = midyear_1, y = duration_1)) +
+  geom_smooth() + 
+  labs(title = "Danish kings duration of reign", x = "Midyear", y = "Duration")
+```
+The graph above shows the average duration of reign through time. The graph fails to inform which monarchs ruled when. Alternatively I could make a grom_point graph. 
+
+The graph below shows the kings and the midyear of their reign in a timeline. The graph below allows the viewer to get a manageable overview of the monarchs time of reign. To improve it, the order of which the kings appear should be by time of reign and not alphabet. 
+
+```{r}
+
+ggplot(kings_clean, aes(x=midyear_1, y=Kings))+
+  geom_point(colour = "blue")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
